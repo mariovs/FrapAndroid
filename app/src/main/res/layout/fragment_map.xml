@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                tools:context="com.mario22gmail.vasile.frap.MapComponent.MapFragment">
+
+
+    <RelativeLayout
+        android:id="@+id/mapContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <com.mapbox.mapboxsdk.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="480dp"
+            app:center_latitude="45.757418"
+            app:center_longitude="21.221473"
+            app:zoom="12">
+
+            <RelativeLayout
+                android:id="@+id/frameMap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <FrameLayout
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_gravity="bottom|right"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/round_button_shape">
+
+                    <ImageButton
+                        android:id="@+id/myLocationButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:src="@drawable/ic_my_location"/>
+                </FrameLayout>
+            </RelativeLayout>
+
+        </com.mapbox.mapboxsdk.maps.MapView>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/news_feed_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/mapContainer"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:paddingLeft="100dp"
+            android:text="News feeed"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

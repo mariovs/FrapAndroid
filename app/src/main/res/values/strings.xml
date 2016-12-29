@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Frap</string>
+    <string name="access_token">pk.eyJ1IjoibWFyaW92YXNpbGUiLCJhIjoiY2l2ZHBjdzE5MDA1NzJ6bDVuaDF1Y2g1eiJ9.g-2JNQMzKxwh45yY3Dlvow</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_menu">MenuActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
