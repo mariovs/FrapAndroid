@@ -46,6 +46,7 @@ public class MapModel implements MapContract.ModelOpsToPresenter {
     public com.mapbox.mapboxsdk.location.LocationServices locationServices;
     private static final int PERMISSIONS_LOCATION = 0;
     private static String debugString = "FrapDebug";
+    private static String altString ="altstring";   
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
