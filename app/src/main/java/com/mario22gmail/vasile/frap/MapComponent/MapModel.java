@@ -11,6 +11,12 @@ import android.telecom.Call;
 import android.util.Log;
 
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -29,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -47,11 +54,16 @@ public class MapModel implements MapContract.ModelOpsToPresenter {
     private static final int PERMISSIONS_LOCATION = 0;
     private static String debugString = "FrapDebug";
     private static String altString ="altstring";   
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("usersLocation");
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void getMyLocation(final MapContract.ModelCallbackToPresenter callback) {
         locationServices = com.mapbox.mapboxsdk.location.LocationServices.getLocationServices(MenuActivity.getAppContext());
+        // Write a message to the database
+
         if (!locationServices.areLocationPermissionsGranted()) {
             ActivityCompat.requestPermissions(MenuActivity.getActivity(), new String[]{
                     Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -60,6 +72,12 @@ public class MapModel implements MapContract.ModelOpsToPresenter {
         Location lastLocation = locationServices.getLastLocation();
         if(lastLocation !=  null)
         {
+
+            FriendLocation friend = new FriendLocation("3",lastLocation.getLatitude(),
+                    lastLocation.getLatitude());
+//            Map<String,Object> friendFireBase = friend.toMap();
+//            myRef.setValue(friendFireBase);
+            myRef.child(friend.friendId).setValue(friend);
             callback.updateMyLocation(new LatLng(lastLocation));
         }
 //            Log.i("FrapDebug" , "locatia a fost gasita " + lastLocation.toString());
@@ -72,47 +90,83 @@ public class MapModel implements MapContract.ModelOpsToPresenter {
 
     @Override
     public void getRandomMarkersLocation(int intervalTime, final MapContract.ModelCallbackToPresenter modelCallbackToPresenter) {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.0.101:8081")
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-                        MapService mapService = retrofit.create(MapService.class);
-                        retrofit2.Call<List<FriendLocation>> friendsLocation = mapService.GetFriends();
-                        friendsLocation.enqueue(new Callback<List<FriendLocation>>() {
-                            @Override
-                            public void onResponse(retrofit2.Call<List<FriendLocation>> call, Response<List<FriendLocation>> response) {
-                                if (response.isSuccessful()) {
-                                    List<FriendLocation> friendLocationList = response.body();
-                                    for(FriendLocation friend : friendLocationList)
-                                    {
-                                        modelCallbackToPresenter.updateMapWithMarkers(friend);
-                                    }
-                                } else {
-                                    Log.i(debugString, "Response from frap server failed");
-                                }
-                            }
 
-                            @Override
-                            public void onFailure(retrofit2.Call<List<FriendLocation>> call, Throwable t) {
-                                Log.i(debugString, "Failure from frap server failed");
-                            }
-                        });
-//                        try {
-//                            AsyncMarker asyncMarker = new AsyncMarker(modelCallbackToPresenter);
-//                            // PerformBackgroundTask this class is the class that extends AsynchTask
-//                            asyncMarker.execute();
-//                        } catch (Exception e) {
-//                        }
-                    }
-                });
+        myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Object myObject = dataSnapshot.getValue();
+                FriendLocation friend = dataSnapshot.getValue(FriendLocation.class);
+                Log.d(debugString, "Value is: " + friend.longitude
+                        + " " + friend.latitude);
+                modelCallbackToPresenter.updateMapWithMarkers(friend);
             }
-        };
-        timer.schedule(doAsynchronousTask, 0, intervalTime);
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Object myObject = dataSnapshot.getValue();
+                FriendLocation friend = dataSnapshot.getValue(FriendLocation.class);
+                Log.d(debugString, "Value is: " + friend.longitude
+                        + " " + friend.latitude);
+                modelCallbackToPresenter.updateMapWithMarkers(friend);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+//        final Handler handler = new Handler();
+//        Timer timer = new Timer();
+//        TimerTask doAsynchronousTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                handler.post(new Runnable() {
+//                    public void run() {
+//                        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://192.168.0.101:8081")
+//                                .addConverterFactory(GsonConverterFactory.create())
+//                                .build();
+//                        MapService mapService = retrofit.create(MapService.class);
+//                        retrofit2.Call<List<FriendLocation>> friendsLocation = mapService.GetFriends();
+//                        friendsLocation.enqueue(new Callback<List<FriendLocation>>() {
+//                            @Override
+//                            public void onResponse(retrofit2.Call<List<FriendLocation>> call, Response<List<FriendLocation>> response) {
+//                                if (response.isSuccessful()) {
+//                                    List<FriendLocation> friendLocationList = response.body();
+//                                    for(FriendLocation friend : friendLocationList)
+//                                    {
+//                                        modelCallbackToPresenter.updateMapWithMarkers(friend);
+//                                    }
+//                                } else {
+//                                    Log.i(debugString, "Response from frap server failed");
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(retrofit2.Call<List<FriendLocation>> call, Throwable t) {
+//                                Log.i(debugString, "Failure from frap server failed");
+//                            }
+//                        });
+////                        try {
+////                            AsyncMarker asyncMarker = new AsyncMarker(modelCallbackToPresenter);
+////                            // PerformBackgroundTask this class is the class that extends AsynchTask
+////                            asyncMarker.execute();
+////                        } catch (Exception e) {
+////                        }
+//                    }
+//                });
+//            }
+//        };
+//        timer.schedule(doAsynchronousTask, 0, intervalTime);
     }
 }

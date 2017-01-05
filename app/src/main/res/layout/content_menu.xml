@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/lib/com.mario22gmail.vasile.frap"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_menu"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.mario22gmail.vasile.frap.MenuActivity"
     tools:showIn="@layout/app_bar_menu">
 
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
 
     <FrameLayout
         android:id="@+id/contentFrame"

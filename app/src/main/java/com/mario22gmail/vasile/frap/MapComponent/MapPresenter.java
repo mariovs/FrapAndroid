@@ -45,7 +45,7 @@ public class MapPresenter implements MapContract.PresenterOpsToView, MapContract
     public void updateMapWithMarkers(FriendLocation friend) {
         if(friend != null)
         {
-            LatLng latLng = new LatLng(friend.getLatitude(),friend.getLongitude());
+            LatLng latLng = new LatLng(friend.latitude,friend.longitude);
             mMapView.showMarkerOnMap(latLng);
         }
     }
